@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt_br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Etiquetas</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-image: linear-gradient(to left, rgb(20, 147, 220), rgb(17, 115, 160));
+        }
+        
+        .box {
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 15px;
+            width: 40%;
+        }
+        
+        fieldset {
+            border: 3px solid dodgerblue;
+        }
+        
+        legend {
+            border: 1px solid dodgerblue;
+            padding: 10px;
+            text-align: center;
+            background-color: dodgerblue;
+            border-radius: 8px;
+        }
+        
+        .inputBox {
+            position: relative;
+            padding: 15px;
+        }
+        
+        .inputUser {
+            background: none;
+            border: none;
+            border-bottom: 1px solid white;
+            outline: none;
+            color: white;
+            font-size: 15px;
+            width: 100%;
+            letter-spacing: 2px;
+        }
+        
+        .labelInput {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            pointer-events: none;
+            transition: .5s;
+        }
+        
+        .inputUser:focus~.labelInput,
+        .inputUser:valid~.labelInput {
+            top: -20px;
+            font-size: 12px;
+            color: dodgerblue;
+        }
+        
+        #data_preparacao {
+            border: none;
+            padding: 8px;
+            border-radius: 10px;
+            outline: none;
+            font-size: 15px;
+        }
+        
+        #send {
+            background-image: linear-gradient(to right, rgb(0, 92, 197), rgb(90, 20, 220));
+            width: 100%;
+            border: none;
+            padding: 15px;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+        
+        #submit:hover {
+            background-image: linear-gradient(to right, rgb(0, 80, 172), rgb(80, 19, 195));
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <form action="javascript: enviar();">
+            <fieldset>
+                <legend><b>Identificação de bases</b></legend>
+                <br>
+                <div class="inputBox">
+                    <input type="text" name="produto" id="model" class="inputUser" required>
+                    <label for="model" class="labelInput">Código da tinta (com revisao):</label>
+                </div>
+                <br><br>
+                <div class="inputBox">
+                    <input type="text" name="lote" id="lot" class="inputUser" required>
+                    <label for="lot" class="labelInput">Lóte da tinta:</label>
+                </div>
+                <br><br>
+                <label for="data_preparacao"><b>Data da preparação:</b></label>
+                <input type="date" name="preparacao" id="data_preparacao" required>
+                <br><br>
+                <br><br>
+                <div class="inputBox">
+                    <input type="time" name="hora" id="time" class="inputUser" required>
+                    <label for="time" class="labelInput">Hora da preparação:</label>
+                </div>
+                <br><br>
+                <div class="inputBox">
+                    <input type="time" name="vencimento" id="venc" class="inputUser" required>
+                    <label for="venc" class="labelInput">Usar até:</label>
+                </div>
+                <br><br>
+                <input type="submit" name="submit" id="send" value="Gerar">
+            </fieldset>
+        </form>
+    </div>
+</body>
+<script>
+    (function(a, b) {
+        if ("function" == typeof define && define.amd) define([], b);
+        else if ("undefined" != typeof exports) b();
+        else {
+            b(), a.FileSaver = {
+                exports: {}
+            }.exports
+        }
+    })(this, function() {
+        "use strict";
+
+        function b(a, b) {
+            return "undefined" == typeof b ? b = {
+                autoBom: !1
+            } : "object" != typeof b && (console.warn("Deprecated: Expected third argument to be a object"), b = {
+                autoBom: !b
+            }), b.autoBom && /^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(a.type) ? new Blob(["\uFEFF", a], {
+                type: a.type
+            }) : a
+        }
+
+        function c(a, b, c) {
+            var d = new XMLHttpRequest;
+            d.open("GET", a), d.responseType = "blob", d.onload = function() {
+                g(d.response, b, c)
+            }, d.onerror = function() {
+                console.error("could not download file")
+            }, d.send()
+        }
+
+        function d(a) {
+            var b = new XMLHttpRequest;
+            b.open("HEAD", a, !1);
+            try {
+                b.send()
+            } catch (a) {}
+            return 200 <= b.status && 299 >= b.status
+        }
+
+        function e(a) {
+            try {
+                a.dispatchEvent(new MouseEvent("click"))
+            } catch (c) {
+                var b = document.createEvent("MouseEvents");
+                b.initMouseEvent("click", !0, !0, window, 0, 0, 0, 80, 20, !1, !1, !1, !1, 0, null), a.dispatchEvent(b)
+            }
+        }
+        var f = "object" == typeof window && window.window === window ? window : "object" == typeof self && self.self === self ? self : "object" == typeof global && global.global === global ? global : void 0,
+            a = /Macintosh/.test(navigator.userAgent) && /AppleWebKit/.test(navigator.userAgent) && !/Safari/.test(navigator.userAgent),
+            g = f.saveAs || ("object" != typeof window || window !== f ? function() {} : "download" in HTMLAnchorElement.prototype && !a ? function(b, g, h) {
+                var i = f.URL || f.webkitURL,
+                    j = document.createElement("a");
+                g = g || b.name || "download", j.download = g, j.rel = "noopener", "string" == typeof b ? (j.href = b, j.origin === location.origin ? e(j) : d(j.href) ? c(b, g, h) : e(j, j.target = "_blank")) : (j.href = i.createObjectURL(b), setTimeout(function() {
+                    i.revokeObjectURL(j.href)
+                }, 4E4), setTimeout(function() {
+                    e(j)
+                }, 0))
+            } : "msSaveOrOpenBlob" in navigator ? function(f, g, h) {
+                if (g = g || f.name || "download", "string" != typeof f) navigator.msSaveOrOpenBlob(b(f, h), g);
+                else if (d(f)) c(f, g, h);
+                else {
+                    var i = document.createElement("a");
+                    i.href = f, i.target = "_blank", setTimeout(function() {
+                        e(i)
+                    })
+                }
+            } : function(b, d, e, g) {
+                if (g = g || open("", "_blank"), g && (g.document.title = g.document.body.innerText = "downloading..."), "string" == typeof b) return c(b, d, e);
+                var h = "application/octet-stream" === b.type,
+                    i = /constructor/i.test(f.HTMLElement) || f.safari,
+                    j = /CriOS\/[\d]+/.test(navigator.userAgent);
+                if ((j || h && i || a) && "undefined" != typeof FileReader) {
+                    var k = new FileReader;
+                    k.onloadend = function() {
+                        var a = k.result;
+                        a = j ? a : a.replace(/^data:[^;]*;/, "data:attachment/file;"), g ? g.location.href = a : location = a, g = null
+                    }, k.readAsDataURL(b)
+                } else {
+                    var l = f.URL || f.webkitURL,
+                        m = l.createObjectURL(b);
+                    g ? g.location = m : location.href = m, g = null, setTimeout(function() {
+                        l.revokeObjectURL(m)
+                    }, 4E4)
+                }
+            });
+        f.saveAs = g.saveAs = g, "undefined" != typeof module && (module.exports = g)
+    });
+
+    //# sourceMappingURL=FileSaver.min.js.map
+</script>
+<script>
+    function enviar() {
+
+        var model = document.querySelector("#model");
+        var lot = document.querySelector("#lot");
+        var data_preparacao = document.querySelector("#data_preparacao");
+        var time = document.querySelector("#time");
+        var venc = document.querySelector("#venc");
+
+
+        var texto =
+            "^XA~TA0~JSB^LT000^MNW^MTT^PON^PMN^LH0,0^JMA^PR8,2~SD30^JUS^LRN^" +
+            "^CI28" +
+            "^MMT" +
+            "^PW700" +
+            "^LL0400" +
+            "^LS0" +
+            "^FO1,1^XG000.GRF,1,1^FS" +
+            "^FT10,210^A0N,70,70^FH\^FDIdentificacao de bases^FS" +
+            "^FT10,280^A0N,30,30^FH\^FDCodigo da tinta (com revisao):^FS" +
+            "-----------------PARTNUMBER--------------------" +
+            "^FT381,280^A0N,35,35^FH\^FD" + model.value + "^FS" +
+            "----------------------------------------------------------" +
+            "^FT10,350^A0N,35,35^FH\^FDLote da tinta:^FS" +
+            "" +
+            "--------------------LOTE DA TINTA----------------" +
+            "^FT210,350^A0N,35,35^FH\^FD" + lot.value + "^FS" +
+            "----------------------------------------------------------" +
+            "" +
+            "^FT10,400^A0N,35,35^FH\^FDData da preparacao:^FS" +
+            "" +
+            "--------------------DATA DA PREPARACAO----------------" +
+            "^FT310,400^A0N,35,35^FH\^FD" + data_preparacao.value + "^FS" +
+            "----------------------------------------------------------------------" +
+            "" +
+            "^FT10,450^A0N,35,35^FH\^FDHora da preparacao:^FS" +
+            "" +
+            "--------------------HORA DA PREPARACAO----------------" +
+            "^FT310,450^A0N,35,35^FH\^FD" + time.value + "^FS" +
+            "----------------------------------------------------------------------" +
+            "" +
+            "^FT450,450^A0N,35,35^FH\^FDUsar até:^FS" +
+            "" +
+            "--------------------HORA DE VENCIMENTO----------------" +
+            "^FT600,450^A0N,35,35^FH\^FD" + venc.value + "^FS" +
+            "----------------------------------------------------------------------" +
+            "^FO70,19^GFA,4158,4158,42,,:::P0JFC,O0LFC,N07MF8,M01OF,M0F8003KFC,L038J03KF,L04L07JFC,S01JFE,T07JF8,T01JFC,M03FFK07IFE,L07JFJ03JF,K03KFEI01JFC,K0MFCI0JFE,J03FC00IFEI07IFE,J0FCJ07FF8003JFY03FFT03FFL07FE,I03EL0FFE001JF8P01FFCI03JF007FFC003FFC1JFJ07IFEI03IFI07FE,I07M03FFI0JFCP01FFC001KFC03FFC007FF87JFI03KF8003IF8007FE,I0CN0FF8007IFEP01FFC007LF03FFC00IF0KFI0LFE003IF8007FE,001I01FEI03FC003JFP01FFC00MF81FFE00IF1KF801MF003IFC007FE,002001JF001FE003JFP01FFC01MFE0FFE01FFE1KF803MFC03IFC007FC,00400KFE007F001JF8O01FFC03NF0IF01FFC3KF807MFC03IFE007FC,J03LF803F800JFCO01FF807NF07FF03FF83KF80NFE03IFE007FC,J0MFE01FC00JFCO01FF80IFE03IF87FF87FF83FFC0381IFC07IF03JF007FC,I01NF00FE007IFEO01FF80IF800IF83FF87FF03FF8I01IF001IF03JF007FC,I07NFC07E007IFEO01FF81IFI07FFC3FFCFFE03FF8I03FFEI0IF83JF807FC,I0OFE03F007JFO01FF81FFEI03FFC1FFCFFE03FF8I03FFCI07FF83JF80FFC,001PF01F803JFO01FF83FFCI01FFE0KFC03FFCI07FF8I03FFC3JFC0FFC,003PF81F803JF8N01FF83FFCI01FFE0KF803FFEI07FF8I03FFC3JFE0FFC,007PFC0FC03JF8N01FF83FF8J0FFE07JF801IFI07FFJ01FFC3JFE0FFC,007PFE07C01JF8N03FF83FF8J0FFE07JFI0IF8007FFJ01FFC3FEIF0FFC,00QFE07E01JFCN03FF87FF8J0FFE03IFEI0IFC00IFJ01FFC3FE7FF0FFC,01RF03E01JFCN03FF87FFK0FFE03IFEI07IF00FFEJ01FFC3FE3FF8FFC,01RF81E01JFCN03FF87FFK0FFE01IFCI03IF80FFEJ01FFC3FE3FF8FFC,03RF81F00JFEN03FF87FFK0FFE01IF8J0IFC0FFEJ01FFC3FE1FFCFFC,03RFC1F00JFEN03FF87FFK0FFE00IF8J07FFE0FFEJ01FFC3FE1FFCFF8,03RFC0F00JFEN03FF87FF8J0FFE007FFK03IF0IFJ03FFC3FE0FFEFF8,07RFE0F00JFEN03FF83FF8I01FFE007FFK01IF07FFJ03FFC3FE0KF8,07MF801FFE0780KFN03FF83FF8I01FFC007FEL0IF87FFJ03FF87FE07JF8,0MFCI03FE0780KFN07FF83FFCI03FFC007FEL07FF87FF8I07FF87FE03JF8,0MFJ01FF0780KFN07FF83FFEI07FFC007FEL03FF87FFCI0IF87FE03JF8,0LFEK07F0780KFK0800IF81IFI0IF8007FEL03FF83FFE001IF07FE01JF8,0LF81J03F0380KFK0F01IF81IF801IF800FFEI0E007FF83IF003IF07FE01JF8,1LF02J01F0380KFK0LF00JF9JFI0FFEI0FC0IF81JF1IFE07FE00JF8,1KFE06K0F8380KFK0LF007MFEI0FFEI0LF00NFC07FE00JF8,1KFC0CK078380KFK0LF007MFCI0FFEI0LF00NF807FE007IF8,1KF81CK038380KFK0KFE003MF8I0FFEI07JFE007MF007FE003IF8,1KF83CK038380KFK0KFEI0MFJ0FFEI07JFE001LFE007FE003IF8,1KF038K018180KFK07JFCI07KFCJ0FFEI07JF8I0LF8007FE001IF8,1JFE078K018180KFK07JFJ01KFK0FFEI07JFJ03JFEI07FE001IF8,1JFE078L08181KFK01IFCK01IF8K0FFEI03IFCK07IFJ07FEI0IF8,1JFC0F8L08101KF,1JFC0F8M0301KF,1JF81F8M0301KF,1JF81F8M0303KF,1JF81F8M0203KF,1JF03F8M0203KF,1JF03F8O07JFE,1JF03FCO07JFE,0JF03FCO0KFE,0JF03FEO0KFEK03F800C003FE03FE07FE0603J07F030180FC07FE03FE0300600FC,0JF03FEN01KFCK060800E003I02J0600302J0C301830184006002I0380E0184,0IFE03FFN01KFCK06I01A003I02J0600306J080018201J06002I03C0E01,07FFE03FFN03KFCK06I013003I02J060018CJ0CI0C6018I06002I03C1E01,07FFE03FF8M07KFCK03I033003I02J06I0D8J0EI06C01CI06002I0361601C,07FFE03FFCM0LF8K01E0031803I03FC006I0F8J038007800FI06003FC0323600F,03FFE03FFEL01LF8L070061803FC03J06I07L0E0038003C006003I03326001C,03IF03IFL03LF8L018061803I02J06I02L03001J0E006002I03166I0C,01IF03IF8K07LFN0807FC03I02J06I02L03001J06006002I031C6I06,01IF03IFEJ01MFN080C0403I02J06I02L03001J06006002I030C6I06,00IF03JF8I07LFEL0618080603I02J06I02K08300100306006002I030060304,00IF01JFE003MFEL07F0180603I03FE006I02K0FE001001FC006003FE0300601FC,007FF81UFC,003FF81UFC,003FF80UF8,001FFC0UF,I0FFC07TF,I07FE07SFE,I07FE03SFC,I03FF03SF8,I01FF01SF,J0FF80RFE,J03FC07QFC,J01FE03QF8,K0FE01QF,K07F00PFE,K01FC07OF8,L07E03OF,L03F00NFC,M0F803MF,M01E00LF8,N07801JFC,O0FI07C,,:^FS" +
+            "^PQ1,0,1,Y^XZ";
+
+        let blob = new Blob([texto], {
+            type: "text/plain;charset=utf-8"
+        });
+
+        saveAs(blob, "etq.txt");
+        //console.log(texto);
+
+    }
+</script>
+
+</html>
