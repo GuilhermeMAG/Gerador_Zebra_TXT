@@ -29,8 +29,6 @@ Set /p choice=Digite o numero correspodente a sua opcao:
 if "%choice%"=="1" goto op1
 if "%choice%"=="2" goto op2
 
-rem Bloco de declaraçao dos gotos
-
 :op1 
 Echo .
 TYPE etq.txt > \\??.???.???.??\ppa01 
