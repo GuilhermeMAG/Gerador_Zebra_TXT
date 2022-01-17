@@ -41,6 +41,12 @@
             padding: 15px;
         }
         
+        .inputBox_user {
+            position: relative;
+            padding: 15px;
+            text-align: right;
+        }
+        
         .inputUser {
             background: none;
             border: none;
@@ -111,6 +117,10 @@
                 <label for="data_preparacao"><b>Data da preparação:</b></label>
                 <input type="date" name="preparacao" id="data_preparacao" required>
                 <br><br>
+                <div class="inputBox_user">
+                    <label for="User"><b>Usuário:</b></label>
+                    <input type="text" name="usuario" id="user" required>
+                </div>
                 <br><br>
                 <div class="inputBox">
                     <input type="time" name="hora" id="time" class="inputUser" required>
@@ -232,6 +242,7 @@
         var time = document.querySelector("#time");
         var venc = document.querySelector("#venc");
         var qtd = document.querySelector("#qtd");
+        var user = document.querySelector("#user");
 
         var texto =
             "^XA~TA0~JSB^LT000^MNW^MTT^PON^PMN^LH0,0^JMA^PR8,2~SD30^JUS^LRN^" +
@@ -250,6 +261,10 @@
             "" +
             "--------------------LOTE DA TINTA----------------" +
             "^FT210,350^A0N,35,35^FH\^FD" + lot.value + "^FS" +
+            "----------------------------------------------------------" +
+            "^FT350,350^A0N,35,35^FH\^FDUsuário:^FS" +
+            "--------------------USUARIO-----------------------" +
+            "^FT480,350^A0N,35,35^FH\^FD" + user.value + "^FS" +
             "----------------------------------------------------------" +
             "" +
             "^FT10,400^A0N,35,35^FH\^FDData da preparacao:^FS" +
